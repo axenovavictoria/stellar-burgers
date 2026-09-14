@@ -1,5 +1,6 @@
 import React, { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
+import clsx from 'clsx';
 import {
   CurrencyIcon,
   FormattedDate
@@ -16,31 +17,33 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
       to={orderInfo.number.toString()}
       relative='path'
       state={locationState}
-      className={`p-6 mb-4 mr-2 ${styles.order}`}
+      className={clsx('p-6 mb-4 mr-2', styles.order)}
     >
       <div className={styles.order_info}>
-        <span className={`text text_type_digits-default ${styles.number}`}>
+        <span className={clsx('text text_type_digits-default', styles.number)}>
           #{String(orderInfo.number).padStart(6, '0')}
         </span>
         <span className='text text_type_main-default text_color_inactive'>
           <FormattedDate date={orderInfo.date} />
         </span>
       </div>
-      <h4 className={`pt-6 text text_type_main-medium ${styles.order_name}`}>
+      <h4
+        className={clsx('pt-6 text text_type_main-medium', styles.order_name)}
+      >
         {orderInfo.name}
       </h4>
       {location.pathname === '/profile/orders' && (
         <OrderStatus status={orderInfo.status} />
       )}
-      <div className={`pt-6 ${styles.order_content}`}>
+      <div className={clsx('pt-6', styles.order_content)}>
         <ul className={styles.ingredients}>
           {orderInfo.ingredientsToShow.map((ingredient, index) => {
-            let zIndex = maxIngredients - index;
-            let right = 20 * index;
+            const zIndex = maxIngredients - index;
+            const right = 20 * index;
             return (
               <li
                 className={styles.img_wrap}
-                style={{ zIndex: zIndex, right: right }}
+                style={{ zIndex, right }}
                 key={index}
               >
                 <img
@@ -56,7 +59,10 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
                 />
                 {maxIngredients === index + 1 ? (
                   <span
-                    className={`text text_type_digits-default ${styles.remains}`}
+                    className={clsx(
+                      'text text_type_digits-default',
+                      styles.remains
+                    )}
                   >
                     {orderInfo.remains > 0 ? `+${orderInfo.remains}` : null}
                   </span>
@@ -67,7 +73,10 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
         </ul>
         <div>
           <span
-            className={`text text_type_digits-default pr-1 ${styles.order_total}`}
+            className={clsx(
+              'text text_type_digits-default pr-1',
+              styles.order_total
+            )}
           >
             {orderInfo.total}
           </span>
