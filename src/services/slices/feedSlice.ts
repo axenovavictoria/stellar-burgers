@@ -1,12 +1,11 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getFeedsApi } from '@api';
 import { TOrder } from '@utils-types';
 
-type TFeedWsMessage = {
-  success: boolean;
-  orders: TOrder[];
-  total: number;
-  totalToday: number;
-};
+export const fetchFeeds = createAsyncThunk('feed/fetchFeeds', async () => {
+  const data = await getFeedsApi();
+  return data;
+});
 
 type TFeedState = {
   orders: TOrder[];
@@ -20,26 +19,32 @@ const initialState: TFeedState = {
   orders: [],
   total: 0,
   totalToday: 0,
-  loading: true,
+  loading: false,
   error: null
 };
 
 export const feedSlice = createSlice({
   name: 'feed',
   initialState,
-  reducers: {
-    feedWsMessage: (state, action: PayloadAction<TFeedWsMessage>) => {
-      state.loading = false;
-      state.orders = action.payload.orders;
-      state.total = action.payload.total;
-      state.totalToday = action.payload.totalToday;
-    },
-    feedWsError: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-    }
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchFeeds.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchFeeds.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload.orders;
+        state.total = action.payload.total;
+        state.totalToday = action.payload.totalToday;
+      })
+      .addCase(fetchFeeds.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.error.message ?? 'Не удалось загрузить ленту заказов';
+      });
   }
 });
 
-export const { feedWsMessage, feedWsError } = feedSlice.actions;
 export default feedSlice.reducer;

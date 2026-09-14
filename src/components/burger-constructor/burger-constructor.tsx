@@ -5,7 +5,13 @@ import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 
 import { useDispatch, useSelector } from '../../services/store';
-import { createOrder, resetOrderModalData, clearConstructor } from '@slices';
+import {
+  createOrder,
+  resetOrderModalData,
+  clearConstructor,
+  fetchFeeds,
+  fetchOrders
+} from '@slices';
 import {
   selectConstructorItems,
   selectNewOrderRequest,
@@ -40,6 +46,8 @@ export const BurgerConstructor: FC = () => {
       .unwrap()
       .then(() => {
         dispatch(clearConstructor());
+        dispatch(fetchFeeds());
+        dispatch(fetchOrders());
       })
       .catch(() => {});
   };

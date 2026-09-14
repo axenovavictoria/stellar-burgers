@@ -1,10 +1,11 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getOrdersApi } from '@api';
 import { TOrder } from '@utils-types';
 
-type TOrdersWsMessage = {
-  success: boolean;
-  orders: TOrder[];
-};
+export const fetchOrders = createAsyncThunk('orders/fetchOrders', async () => {
+  const orders = await getOrdersApi();
+  return orders;
+});
 
 type TOrdersState = {
   orders: TOrder[];
@@ -14,24 +15,30 @@ type TOrdersState = {
 
 const initialState: TOrdersState = {
   orders: [],
-  loading: true,
+  loading: false,
   error: null
 };
 
 export const ordersSlice = createSlice({
   name: 'orders',
   initialState,
-  reducers: {
-    ordersWsMessage: (state, action: PayloadAction<TOrdersWsMessage>) => {
-      state.loading = false;
-      state.orders = action.payload.orders;
-    },
-    ordersWsError: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-    }
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchOrders.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload;
+      })
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.error.message ?? 'Не удалось загрузить историю заказов';
+      });
   }
 });
 
-export const { ordersWsMessage, ordersWsError } = ordersSlice.actions;
 export default ordersSlice.reducer;
