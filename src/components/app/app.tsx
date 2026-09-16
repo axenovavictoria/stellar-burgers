@@ -1,5 +1,11 @@
 import { FC, useEffect } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router-dom';
 
 import '../../index.css';
 import styles from './app.module.css';
@@ -29,6 +35,17 @@ import { useDispatch, useSelector } from '../../services/store';
 import { fetchIngredients, checkUserAuth } from '@slices';
 import { selectIsAuthChecked } from '@selectors';
 
+const OrderInfoModal: FC<{ onClose: () => void }> = ({ onClose }) => {
+  const { number } = useParams();
+  const title = number ? `#${number.padStart(6, '0')}` : '';
+
+  return (
+    <Modal title={title} onClose={onClose}>
+      <OrderInfo />
+    </Modal>
+  );
+};
+
 const App: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,10 +53,10 @@ const App: FC = () => {
 
   const isAuthChecked = useSelector(selectIsAuthChecked);
 
-  const state = location.state as {
+  const locationState = location.state as {
     background?: ReturnType<typeof useLocation>;
   };
-  const background = state?.background;
+  const background = locationState?.background;
 
   useEffect(() => {
     dispatch(fetchIngredients());
@@ -149,19 +166,13 @@ const App: FC = () => {
           />
           <Route
             path='/feed/:number'
-            element={
-              <Modal title='' onClose={handleModalClose}>
-                <OrderInfo />
-              </Modal>
-            }
+            element={<OrderInfoModal onClose={handleModalClose} />}
           />
           <Route
             path='/profile/orders/:number'
             element={
               <ProtectedRoute>
-                <Modal title='' onClose={handleModalClose}>
-                  <OrderInfo />
-                </Modal>
+                <OrderInfoModal onClose={handleModalClose} />
               </ProtectedRoute>
             }
           />

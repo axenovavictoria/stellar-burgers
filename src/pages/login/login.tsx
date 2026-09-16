@@ -20,10 +20,10 @@ export const Login: FC = () => {
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        const state = location.state as {
+        const locationState = location.state as {
           from?: ReturnType<typeof useLocation>;
         };
-        navigate(state?.from ?? '/', { replace: true });
+        navigate(locationState?.from ?? '/', { replace: true });
       })
       .catch(() => {});
   };

@@ -23,8 +23,10 @@ export const ProtectedRoute: FC<TProtectedRouteProps> = ({
   }
 
   if (onlyUnAuth && isAuthenticated) {
-    const state = location.state as { from?: ReturnType<typeof useLocation> };
-    return <Navigate replace to={state?.from ?? '/'} />;
+    const locationState = location.state as {
+      from?: ReturnType<typeof useLocation>;
+    };
+    return <Navigate replace to={locationState?.from ?? '/'} />;
   }
 
   if (!onlyUnAuth && !isAuthenticated) {
