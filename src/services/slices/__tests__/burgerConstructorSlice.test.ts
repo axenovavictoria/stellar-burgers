@@ -7,12 +7,13 @@ jest.mock('@reduxjs/toolkit', () => {
 });
 
 import reducer, {
-  addIngredient,
-  removeIngredient,
-  moveIngredientUp,
-  moveIngredientDown,
-  clearConstructor
-} from '../burgerConstructorSlice';
+    addIngredient,
+    removeIngredient,
+    moveIngredientUp,
+    moveIngredientDown,
+    clearConstructor,
+    initialState
+  } from '../burgerConstructorSlice';
 import { TIngredient } from '@utils-types';
 
 const bun: TIngredient = {
@@ -42,8 +43,6 @@ const main: TIngredient = {
   image_mobile: '',
   image_large: ''
 };
-
-const initialState = { bun: null, ingredients: [] };
 
 describe('редьюсер burgerConstructorSlice', () => {
   it('возвращает начальное состояние при неизвестном экшене', () => {
