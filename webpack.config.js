@@ -91,6 +91,12 @@ module.exports = {
     compress: true,
     historyApiFallback: true,
     port: 4000,
-    open: true
+    open: true,
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false
+      }
+    }
   }
 };
